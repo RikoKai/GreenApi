@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GREEN-API Methods</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>GREEN-API Methods</h1>
+    <div class="form-group">
+        <label for="idInstance">idInstance</label>
+        <input type="text" id="idInstance">
+    </div>
+    <div class="form-group">
+        <label for="apiTokenInstance">ApiTokenInstance</label>
+        <input type="text" id="apiTokenInstance">
+    </div>
+    <div class="form-group">
+        <label for="phoneNumber">Phone Number (for sendMessage and sendFileByUrl)</label>
+        <input type="text" id="phoneNumber">
+    </div>
+    <div class="form-group">
+        <label for="message">Message (for sendMessage)</label>
+        <input type="text" id="message">
+    </div>
+    <div class="form-group">
+        <label for="fileUrl">File URL (for sendFileByUrl)</label>
+        <input type="text" id="fileUrl">
+    </div>
+    <div class="form-group">
+        <button onclick="callApi('getSettings')">Get Settings</button>
+        <button onclick="callApi('getStateInstance')">Get State Instance</button>
+        <button onclick="callApi('sendMessage')">Send Message</button>
+        <button onclick="callApi('sendFileByUrl')">Send File By URL</button>
+    </div>
+    <div class="form-group">
+        <label for="response">Ответ</label>
+        <textarea id="response" readonly></textarea>
+    </div>
+    <script>
+        async function callApi(method) {
+            const idInstance = document.getElementById('idInstance').value;
+            const apiTokenInstance = document.getElementById('apiTokenInstance').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const message = document.getElementById('message').value;
+            const fileUrl = document.getElementById('fileUrl').value;
+            const responseField = document.getElementById('response');
+
+            let url = `/api/${method}`;
+            let payload = {
+                idInstance: idInstance,
+                apiTokenInstance: apiTokenInstance,
+                phoneNumber: phoneNumber,
+                message: message,
+                fileUrl: fileUrl
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                responseField.value = JSON.stringify(data, null, 2);
+            } catch (error) {
+                responseField.value = `Error: ${error}`;
+            }
+        }
+    </script>
+</body>
+</html>
